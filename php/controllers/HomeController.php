@@ -8,4 +8,11 @@ class HomeController extends BaseController
 	{
 		return json([]);
 	}
+
+	protected function getRenderData(): array
+	{
+		return [
+			'welcomeMessage' => 'This is a welcome message from <code>HomeController.php</code>'
+		];
+	}
 }

@@ -11,6 +11,11 @@ abstract class BaseController
 	protected abstract function renderJSON(): string;
 
 	/**
+	 * Return data passed to the template and the content.
+	 */
+	protected abstract function getRenderData(): array;
+
+	/**
 	 * Render view linked to the Controller
 	 *
 	 * @param ERenderType The render format wanted
@@ -18,6 +23,7 @@ abstract class BaseController
 	public function render(int $renderType = ERenderType::STANDALONE): void
 	{
 		$viewPath = str_replace('Controller', 'View', get_class($this));
+		$renderData = $this->getRenderData();
 
 		switch ($renderType) {
 			case ERenderType::HTML:

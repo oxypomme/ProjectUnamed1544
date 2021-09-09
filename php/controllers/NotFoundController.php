@@ -10,4 +10,9 @@ class NotFoundController extends BaseController
 			'message' => "Error: ${_SERVER['PATH_INFO']} doesn't exist."
 		], 404);
 	}
+
+	protected function getRenderData(): array
+	{
+		return [];
+	}
 }

@@ -6,6 +6,7 @@
 		<!-- Meta Data -->
 		<title>Project Unamed 1544</title>
 		<meta name="description" content="" />
+
 		<!-- Critical style -->
 		<style>
 			* {
@@ -40,18 +41,10 @@
 	</head>
 
 	<body>
-		<nav>
-			<ul>
-				<li><a href="/index.php/">Home</a></li>
-				<li><a href="/index.php/Page">Page</a></li>
-				<li><a href="/index.php/Existe">Existe pas</a></li>
-			</ul>
-		</nav>
-
 		<div id="preloader" class="show">
 			<div>
 				<i class="fas fa-circle-notch fa-spin"></i>
-				Chargement
+				Loading...
 			</div>
 		</div>
 

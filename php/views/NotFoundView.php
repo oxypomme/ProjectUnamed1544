@@ -1,5 +1,5 @@
 <header>
-	Page Non Trouvée
+	Page Not Found
 </header>
 
 <main>

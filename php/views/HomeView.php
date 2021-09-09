@@ -1,7 +1,7 @@
 <header>
-	Bonjour
+	Hey !
 </header>
 
 <main>
-	Monde
+	<?= $renderData['welcomeMessage'] ?>
 </main>
