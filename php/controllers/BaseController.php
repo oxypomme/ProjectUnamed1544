@@ -17,7 +17,7 @@ abstract class BaseController
 				break;
 
 			case ERenderType::JSON:
-				$this->renderJSON();
+				echo $this->renderJSON();
 				break;
 
 			default:

@@ -6,6 +6,6 @@ class PageController extends BaseController
 {
 	protected function renderJSON(): string
 	{
-		return json('{}');
+		return json([]);
 	}
 }

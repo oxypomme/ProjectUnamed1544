@@ -6,6 +6,6 @@ class HomeController extends BaseController
 {
 	protected function renderJSON(): string
 	{
-		return json('{}');
+		return json([]);
 	}
 }

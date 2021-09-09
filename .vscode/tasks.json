@@ -6,7 +6,7 @@
 		{
 			"label": "Run PHP",
 			"type": "shell",
-			"command": "php -S localhost:8080"
+			"command": "php -S localhost:8080 router.php"
 		},
 		{
 			"label": "Run sass",

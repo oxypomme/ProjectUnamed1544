@@ -1,6 +1,7 @@
 <?php
 
 include 'config.php';
+include 'functions.php';
 
 function getController(string $name)
 {
