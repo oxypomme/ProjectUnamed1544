@@ -5,7 +5,7 @@ class DB
   private static self $_instance;
   public static function getInstance(...$params): self
   {
-    if (!is_null(self::$_instance)) {
+    if (!isset(self::$_instance)) {
       self::$_instance = new self($params);
     }
     return self::$_instance;
@@ -37,7 +37,9 @@ class DB
     $query = $this->_pdo->prepare($query);
     
     foreach ($params as $pname => $pcontent) {
-      $query->bindParam($pname, is_array($pcontent) ? $pcontent[0] : $pcontent, (is_array($pcontent) && $pcontent[1]) ? $pcontent[1] : PDO::PARAM_STR);
+      $pvalue = is_array($pcontent) ? $pcontent[0] : $pcontent;
+      $ptype = (is_array($pcontent) && $pcontent[1]) ? $pcontent[1] : PDO::PARAM_STR;
+      $query->bindParam($pname, $pvalue, $ptype);
     }
 
     $query->execute();

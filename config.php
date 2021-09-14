@@ -6,7 +6,7 @@ const MODELS_DIR = BASE_DIR . '/php/models';
 const VIEWS_DIR = BASE_DIR . '/php/views';
 
 // Get .env content
-function () {
+(function () {
   if(file_exists(__DIR__ . '/.env')) {
     $rows = explode("\n", file_get_contents(__DIR__ . '/.env'));
     foreach ($rows as $row) {
@@ -18,4 +18,4 @@ function () {
       }
     }
   }
-};
+})();
