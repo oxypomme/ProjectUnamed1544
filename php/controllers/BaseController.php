@@ -18,7 +18,7 @@ abstract class BaseController
 	/**
 	 * Render view linked to the Controller
 	 *
-	 * @param ERenderType The render format wanted
+	 * @param ERenderType $renderType The render format wanted
 	 */
 	public function render(int $renderType = ERenderType::STANDALONE): void
 	{

@@ -21,17 +21,54 @@ class DB
     }
   }
 
-  public function fetch(string $query, array $params = [], int $mode = PDO::FETCH_OBJ): mixed
+  /**
+   * Prepare a query and binds params.
+   * 
+   * @param string $query The SQL statement to prepare and execute.
+   * @param array $params The parameters passed to the SQL statement.
+   * 
+   * Params follow the form: `['p1' => 'val1', 'p2' => ['val2'], 'p3' => ['val3', PDO::PARAM_STR]]`
+   * @param int $mode Controls the contents of the returned array as documented in `PDOStatement::fetch`.
+   * 
+   * @return array Returns an array containing all of the result set rows
+   */
+  public function fetch(string $query, array $params = [], int $mode = PDO::FETCH_OBJ): array
   {
     $query = $this->_pdo->prepare($query);
-    $query->execute($params);
-    $rows = $query->fetch($mode);
+    
+    foreach ($params as $pname => $pcontent) {
+      $query->bindParam($pname, is_array($pcontent) ? $pcontent[0] : $pcontent, (is_array($pcontent) && $pcontent[1]) ? $pcontent[1] : PDO::PARAM_STR);
+    }
+
+    $query->execute();
+    $rows = $query->fetchAll($mode);
     return $rows;
   }
 
+  /**
+   * Shorthand to `$pdo->exec()`.
+   * 
+   * @param string $query The SQL statement to prepare and execute.
+   * @return null|int Returns the number of rows that were modified or deleted by the SQL statement you issued or null if an error occured.
+   */
   public function exec(string $query): ?int
   {
     $res = $this->_pdo->exec($query);
+    if($res === false) {
+      return null;
+    }
+    return $res;
+  }
+
+  /**
+   * Shorthand to `$pdo->quote()`
+   * 
+   * @param string $string The string to be quoted.
+   * @param int $type Provides a data type hint for drivers that have alternate quoting styles.
+   * @return null|string A quoted string that is theoretically safe to pass into an SQL statement or null if the driver does not support quoting in this way.
+   */
+  public function quote(string $string, int $type = PDO::PARAM_STR): ?string {
+    $res = $this->_pdo->quote($string, $type);
     if($res === false) {
       return null;
     }

@@ -1,9 +1,9 @@
 <?php
 
-define('BASE_DIR', __DIR__);
-define('CONTROLLERS_DIR', BASE_DIR . '/php/controllers');
-define('MODELS_DIR', BASE_DIR . '/php/models');
-define('VIEWS_DIR', BASE_DIR . '/php/views');
+const BASE_DIR = __DIR__;
+const CONTROLLERS_DIR = BASE_DIR . '/php/controllers';
+const MODELS_DIR = BASE_DIR . '/php/models';
+const VIEWS_DIR = BASE_DIR . '/php/views';
 
 // Get .env content
 function () {
