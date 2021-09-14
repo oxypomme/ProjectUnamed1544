@@ -5,7 +5,7 @@ include 'functions.php';
 
 // Extracting route
 $args = explode('/', $_SERVER['PATH_INFO'] ?? '');
-$route = 'home';
+$route = 'Home';
 if (count($args) > 1 && $args[1]) {
 	$route = ucfirst(strtolower($args[1]));
 }

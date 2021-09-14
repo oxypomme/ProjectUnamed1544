@@ -33,6 +33,7 @@ abstract class BaseController
 
 			case ERenderType::JSON:
 				// Returning only the JSON data
+				header('Content-Type: application/json');
 				echo $this->renderJSON();
 				break;
 
