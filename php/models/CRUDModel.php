@@ -1,34 +1,10 @@
 <?php
 
+include_once MODELS_DIR . '/db/DB.php';
+
 abstract class CRUDModel
 {
-	//? Maybe parseClass like parseAttributes
 	protected const TABLE_NAME = null;
-
-	private static function parseAttributes(ReflectionProperty &$prop) {
-		$doc = $prop->getDocComment();
-		$attrs = [];
-		if($doc) {
-			$matches = [];
-			preg_match_all('/#.*/m', $doc, $matches);
-			foreach ($matches[0] as $rawattr) {
-				$attr = [];
-				preg_match('/#(?<name>[^(\s]+)(\((?<values>.+)\))?/', $rawattr, $attr);
-
-				$vals = [];
-				if($attr['values']) {
-					foreach (explode(',', $attr['values']) as $val) {
-						$vals[] = trim($val);
-					}
-				} else {
-					$vals = true;
-				}
-
-				$attrs[$attr['name']] = $vals;
-			}
-		}
-		return $attrs;
-	}
 	
 	// public static abstract function read();
 	// public abstract function update();
@@ -36,42 +12,40 @@ abstract class CRUDModel
 	public function create()
 	{
 		$reflection = new ReflectionClass($this);
+		$classAttrs = parseAttributes($reflection);
 
-		$sql = 'INSERT INTO ' . ($this::TABLE_NAME ?? str_replace('Model', '', get_class($this)) . 's') . ' (';
-
-		$values = [];
-		$isFirst = true;
+		$data = [];
 		foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $prop) {
 			$propName = $prop->getName();
-			$propAttrs = self::parseAttributes($prop);
+			$propAttrs = parseAttributes($prop);
 			// Ignore props without values
 			if(!$this->$propName || $propAttrs['Ignore']) {
 				continue;
 			}
 
-			if (!$isFirst) {
-				$sql .= ',';
-			}
-			$isFirst = false;
-
-			$sql .= '`' . ($propAttrs['ColumnName'][0] ?? $propName) . '`';
-			$values[] = $this->$propName;
+			$data[$propName] = $this->$propName;
 		}
 
-		$sql .= ') VALUES (';
+		$model_sql = '';
+		$values_sql = '';
 
 		$isFirst = true;
-		foreach ($values as $val) {
-			if (!$isFirst) {
-				$sql .= ',';
-			}
-			$isFirst = false;
-			
-			$sql .= "'${val}'";
-		}
-		$sql .= ');';
+		foreach ($data as $key => $value) {
+			$model_sql .= "`${key}`";
+			$values_sql .= ":${key}";
 
-		print $sql;
+			if($isFirst) {
+				$isFirst = false;
+				$model_sql .= ', ';
+				$values_sql .= ', ';
+			}
+		}
+
+		var_dump($data);
+		print 'INSERT INTO ' 
+					. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's') 
+					. " (${model_sql}) VALUES (${values_sql})";
+		// TODO: pass $data to fetch
 	}
 	public static function read()
 	{

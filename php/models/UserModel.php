@@ -1,10 +1,11 @@
 <?php
 include_once 'CRUDModel.php';
 
+/**
+ * #Table(user)
+ */
 class UserModel extends CRUDModel
 {
-  protected const TABLE_NAME = 'user';
-
   public string $login;
   public string $password;
 
