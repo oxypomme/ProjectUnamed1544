@@ -32,14 +32,15 @@ class DB
    * 
    * @return array Returns an array containing all of the result set rows
    */
-  public function fetch(string $query, array $params = [], int $mode = PDO::FETCH_OBJ): array
+  public function prepare(string $query, array $params = [], int $mode = PDO::FETCH_OBJ): array
   {
     $query = $this->_pdo->prepare($query);
     
+    $tmpVals = [];
     foreach ($params as $pname => $pcontent) {
-      $pvalue = is_array($pcontent) ? $pcontent[0] : $pcontent;
+      $tmpVals[] = is_array($pcontent) ? $pcontent[0] : $pcontent;
       $ptype = (is_array($pcontent) && $pcontent[1]) ? $pcontent[1] : PDO::PARAM_STR;
-      $query->bindParam($pname, $pvalue, $ptype);
+      $query->bindParam($pname, $tmpVals[count($tmpVals) - 1], $ptype);
     }
 
     $query->execute();

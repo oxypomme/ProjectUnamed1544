@@ -5,7 +5,7 @@ include_once MODELS_DIR . '/db/DB.php';
 abstract class CRUDModel
 {
 	protected const TABLE_NAME = null;
-	
+
 	// public static abstract function read();
 	// public abstract function update();
 	// public abstract function delete();
@@ -19,7 +19,7 @@ abstract class CRUDModel
 			$propName = $prop->getName();
 			$propAttrs = parseAttributes($prop);
 			// Ignore props without values
-			if(!$this->$propName || $propAttrs['Ignore']) {
+			if (!$this->$propName || $propAttrs['Ignore']) {
 				continue;
 			}
 
@@ -34,18 +34,19 @@ abstract class CRUDModel
 			$model_sql .= "`${key}`";
 			$values_sql .= ":${key}";
 
-			if($isFirst) {
+			if ($isFirst) {
 				$isFirst = false;
 				$model_sql .= ', ';
 				$values_sql .= ', ';
 			}
 		}
 
-		var_dump($data);
-		print 'INSERT INTO ' 
-					. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's') 
-					. " (${model_sql}) VALUES (${values_sql})";
-		// TODO: pass $data to fetch
+		DB::getInstance()->prepare(
+			'INSERT INTO '
+				. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's')
+				. " (${model_sql}) VALUES (${values_sql})",
+			$data
+		);
 	}
 	public static function read()
 	{
@@ -58,12 +59,12 @@ abstract class CRUDModel
 	}
 
 	public function __set(string $property, $value)
-  {
-    switch ($property) {
+	{
+		switch ($property) {
 
-      default:
+			default:
 				$this->$property = $value;
-        break;
-    }
-  }
+				break;
+		}
+	}
 }

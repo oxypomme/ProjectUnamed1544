@@ -2,7 +2,7 @@
 include_once 'CRUDModel.php';
 
 /**
- * #Table(user)
+ * #Table(users)
  */
 class UserModel extends CRUDModel
 {
