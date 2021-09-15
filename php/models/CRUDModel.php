@@ -4,8 +4,6 @@ include_once MODELS_DIR . '/db/DB.php';
 
 abstract class CRUDModel
 {
-	// public abstract function update();
-
 	public function create(): void
 	{
 		$reflection = new ReflectionClass($this);
@@ -34,7 +32,7 @@ abstract class CRUDModel
 				$model_sql .= ', ';
 				$values_sql .= ', ';
 			}
-			
+
 			$model_sql .= "`${key}`";
 			$values_sql .= ":${key}";
 		}
@@ -67,11 +65,7 @@ abstract class CRUDModel
 		);
 	}
 
-	public function update()
-	{
-	}
-
-	public function delete()
+	public function update(string $property, $newvalue): void
 	{
 		$reflection = new ReflectionClass($this);
 		$classAttrs = parseAttributes($reflection);
@@ -81,7 +75,47 @@ abstract class CRUDModel
 			$propName = $prop->getName();
 			$propAttrs = parseAttributes($prop);
 			// Ignore props without values
-			if (!isset($this->$propName) || $propAttrs['Ignore']) {
+			if (!isset($this->$propName) || $propAttrs['Ignore'] || $propAttrs['WriteOnly']) {
+				continue;
+			}
+
+			$data[$propName] = $this->$propName;
+		}
+
+		$sql = '';
+
+		$isFirst = true;
+		foreach ($data as $key => $value) {
+			if ($isFirst) {
+				$isFirst = false;
+			} else {
+				$sql .= ' AND ';
+			}
+
+			$sql .= "`${key}` = :${key}";
+		}
+		$data['newvalue'] = $newvalue;
+
+		DB::getInstance()->prepare(
+			'UPDATE '
+				. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's')
+				. " SET ${property} = :newvalue"
+				. " WHERE ${sql}",
+			$data
+		);
+	}
+
+	public function delete(): void
+	{
+		$reflection = new ReflectionClass($this);
+		$classAttrs = parseAttributes($reflection);
+
+		$data = [];
+		foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $prop) {
+			$propName = $prop->getName();
+			$propAttrs = parseAttributes($prop);
+			// Ignore props without values
+			if (!isset($this->$propName) || $propAttrs['Ignore'] || $propAttrs['WriteOnly']) {
 				continue;
 			}
 
@@ -101,24 +135,17 @@ abstract class CRUDModel
 			$sql .= "`${key}` = :${key}";
 		}
 
-		var_dump(['DELETE FROM '
+		DB::getInstance()->prepare(
+			'DELETE FROM '
 				. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's')
-				. " WHERE ${sql}", $data]);
-		// DB::getInstance()->prepare(
-		// 	'DELETE FROM '
-		// 		. ($classAttrs['Table'][0] ?? str_replace('Model', '', get_class($this)) . 's')
-		// 		. " WHERE ${sql}",
-		// 	$data
-		// );
+				. " WHERE ${sql}",
+			$data
+		);
 	}
 
 	public function __set(string $property, $value): void
 	{
-		switch ($property) {
-
-			default:
-				$this->$property = $value;
-				break;
-		}
+		$this->update($property, $value);
+		$this->$property = $value;
 	}
 }

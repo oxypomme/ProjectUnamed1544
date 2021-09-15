@@ -26,7 +26,9 @@ class UserModel extends CRUDModel
   {
     switch ($property) {
       case 'password':
-        $this->password = password_hash((string) $value, PASSWORD_DEFAULT);
+        $newpass = password_hash((string) $value, PASSWORD_DEFAULT);
+        $this->update($property, $newpass);
+        $this->password = $newpass;
         break;
 
       default:
