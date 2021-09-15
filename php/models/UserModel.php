@@ -6,7 +6,14 @@ include_once 'CRUDModel.php';
  */
 class UserModel extends CRUDModel
 {
+  /**
+   * #ReadOnly
+   */
+  public int $id;
   public string $login;
+  /**
+   * #WriteOnly
+   */
   public string $password;
 
   public function __construct(string $login, string $password)
@@ -15,7 +22,7 @@ class UserModel extends CRUDModel
     $this->password = password_hash((string) $password, PASSWORD_DEFAULT);
   }
 
-  public function __set(string $property, $value)
+  public function __set(string $property, $value): void
   {
     switch ($property) {
       case 'password':

@@ -4,12 +4,10 @@ include_once MODELS_DIR . '/db/DB.php';
 
 abstract class CRUDModel
 {
-	protected const TABLE_NAME = null;
-
 	// public static abstract function read();
 	// public abstract function update();
 	// public abstract function delete();
-	public function create()
+	public function create(): void
 	{
 		$reflection = new ReflectionClass($this);
 		$classAttrs = parseAttributes($reflection);
@@ -19,7 +17,7 @@ abstract class CRUDModel
 			$propName = $prop->getName();
 			$propAttrs = parseAttributes($prop);
 			// Ignore props without values
-			if (!$this->$propName || $propAttrs['Ignore']) {
+			if (!$this->$propName || $propAttrs['Ignore'] || $propAttrs['ReadOnly']) {
 				continue;
 			}
 
@@ -48,8 +46,24 @@ abstract class CRUDModel
 			$data
 		);
 	}
-	public static function read()
+	public static function read(): array
 	{
+		$reflection = new ReflectionClass(static::class);
+		$classAttrs = parseAttributes($reflection);
+
+		$props = [];
+		foreach ($reflection->getProperties(ReflectionProperty::IS_PUBLIC) as $prop) {
+			$propName = $prop->getName();
+			$propAttrs = parseAttributes($prop);
+			if ($propAttrs['Ignore'] || $propAttrs['WriteOnly']) {
+				continue;
+			}
+			$props[] = $propName;
+		}
+
+		return DB::getInstance()->prepare(
+			'SELECT ' . implode(', ', $props) . ' FROM ' . ($classAttrs['Table'][0] ?? str_replace('Model', '', static::class) . 's')
+		);
 	}
 	public function update()
 	{
@@ -58,7 +72,7 @@ abstract class CRUDModel
 	{
 	}
 
-	public function __set(string $property, $value)
+	public function __set(string $property, $value): void
 	{
 		switch ($property) {
 
