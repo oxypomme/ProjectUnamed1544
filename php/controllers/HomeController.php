@@ -12,7 +12,7 @@ class HomeController extends BaseController
 	protected function getRenderData(): array
 	{
 		include_once MODELS_DIR . '/UserModel.php';
-		$test = new UserModel('logintest', 'passtest');
+		$test = new UserModel('logi\'ntest', 'passtest');
 		$test->create();
 
 		return [
