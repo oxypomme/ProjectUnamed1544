@@ -55,6 +55,13 @@
 		<footer></footer>
 
 		<!-- JS -->
+		<?php
+			if(file_exists(BASE_DIR . '/static/js/bundle.js')) {
+				echo '<script type="module" src="/static/js/bundle.js"></script>';
+			} else {
+				echo '<script type="module" src="/static/js/routing.js"></script>';
+			}
+		?>
 		<script type="module" src="/static/js/routing.js"></script>
 	</body>
 </html>
