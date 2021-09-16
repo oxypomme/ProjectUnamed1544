@@ -20,6 +20,7 @@ class UserModel extends CRUDModel
   {
     $this->login = $login;
     $this->password = password_hash((string) $password, PASSWORD_DEFAULT);
+    parent::__construct();
   }
 
   public function __set(string $property, $value): void

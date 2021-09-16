@@ -4,6 +4,10 @@ include_once MODELS_DIR . '/db/DB.php';
 
 abstract class CRUDModel
 {
+	public function __construct() {
+		$this->create();
+	}
+
 	public function create(): void
 	{
 		$reflection = new ReflectionClass($this);
