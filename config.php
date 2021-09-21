@@ -13,7 +13,7 @@ const VIEWS_DIR = BASE_DIR . '/php/views';
       $varArr = explode('=', $row);
       $name = trim($varArr[0]);
 
-      if(!isset($_ENV[$name])) {
+      if(!isset($_ENV[$name]) && isset($varArr[1])) {
         $_ENV[$name] = trim($varArr[1]);
       }
     }
